@@ -8,3 +8,7 @@ Just add your wigle.net API key then run probe-stalker.py
 Needs Python 3
 
 Needs some kind of wlan device that can be put into monitor mode.
+
+Based on Probe-Hunter - https://github.com/mgp25/Probe-Hunter
+
+
