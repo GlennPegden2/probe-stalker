@@ -1,8 +1,12 @@
-import requests, json
+import json
+import requests
+import os
+from dotenv import load_dotenv
+
 
 class Wigle:
-
-    AUTH            = 'Basic PUTYOURWIGLEAPIKEYHERE'
+    load_dotenv()
+    AUTH            = f'Basic {os.getenv("WIGLE_AUTH")}'
     ENDPOINT_SEARCH = 'https://api.wigle.net/api/v2/network/search'
 
     def wigle_location(ssid, wigle_flag):
