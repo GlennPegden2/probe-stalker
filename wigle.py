@@ -1,11 +1,17 @@
-import requests, json
+import json
+import requests
+import os
+from dotenv import load_dotenv
+
 
 class Wigle:
-
-    AUTH            = 'Basic PUTYOURWIGLEAPIKEYHERE'
+    load_dotenv()
+    AUTH            = f'Basic {os.getenv("WIGLE_AUTH")}'
     ENDPOINT_SEARCH = 'https://api.wigle.net/api/v2/network/search'
 
-    def wigle_location(ssid, wigle_flag):
+    def wigle_location(ssid, disable_wigle):
+        if disable_wigle:
+            return None
         headers = {
             'accept': 'application/json',
             'authorization': Wigle.AUTH
@@ -34,7 +40,7 @@ class Wigle:
         if 'message' in res:
             if res['message'] == 'too many queries today':
                 return 3
-        if not wigle_flag:
+        if not disable_wigle:
             if 'results' in res:
                 if len(res['results']) > 40:
                     return 2

@@ -4,7 +4,10 @@ from subprocess import Popen, PIPE
 from colorclass import Color
 from terminaltables import AsciiTable
 from mac_vendor_lookup import MacLookup
+import os
+from dotenv import load_dotenv
 
+load_dotenv()
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--iface", help='Interface to capture data', required=True)
@@ -16,9 +19,9 @@ macdb = MacLookup()
 macdb.load_vendors()
 
 run = True
-wigle_flag = False
-if Wigle.AUTH == '':
-    wigle_flag = True
+disable_wigle = False
+if os.getenv('WIGLE_AUTH') == '':
+    disable_wigle = True
 
 def signal_handler(sig, frame):
     global run
@@ -113,19 +116,19 @@ for row in iter(process.stdout.readline, b''):
             registered[ssid].append(mac)
             if args.debug:
                print("Looking for {}".format(ssid)) 
-            wigle = Wigle.wigle_location(ssid, wigle_flag)
+            wigle = Wigle.wigle_location(ssid, disable_wigle)
             adr = "~"
             if wigle is  1:
                 loc = "API returned error"
                 print("API returned error")
-            elif wigle is 2 and not wigle_flag:
+            elif wigle is 2 and not disable_wigle:
                 loc = '-'
-            elif wigle is 3 and not wigle_flag:
+            elif wigle is 3 and not disable_wigle:
                 loc = 'API limit reached - Loc faked'
                 adr = OSM.OSM_location("53.7581", "-1.6363")
-            elif wigle is None and not wigle_flag:
+            elif wigle is None and not disable_wigle:
                 loc = 'API call failed (nothing returned)'
-            elif wigle_flag:
+            elif disable_wigle:
                 loc = 'Wigle API Disabled'
             else:
                 loc = str(wigle['trilat'])+', '+str(wigle['trilong'])
